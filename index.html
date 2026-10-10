@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Budget Tracker</title>
+<link rel="stylesheet" href="style.css" />
+<link rel="icon" type="image/svg+xml" href="logo.svg" />
+<link rel="apple-touch-icon" href="logo.svg" />
+</head>
+<body>
+<div class="app">
+
+  <header class="topbar">
+    <h1><img src="logo.svg" alt="" class="logo" width="32" height="32" />Budget Tracker</h1>
+    <div class="month-nav">
+      <button id="prevMonth" aria-label="Previous month">‹</button>
+      <span id="currentMonth">August 2026</span>
+      <button id="nextMonth" aria-label="Next month">›</button>
+    </div>
+  </header>
+
+  <section class="project-bar">
+    <div class="project-pills" id="projectPills"></div>
+    <button id="manageProjectsBtn" class="manage-btn" aria-label="Manage projects">⚙ Manage</button>
+  </section>
+
+  <section class="summary">
+    <div class="card income">
+      <span class="label">Income</span>
+      <span class="value" id="totalIncome">$0.00</span>
+    </div>
+    <div class="card expense">
+      <span class="label">Expenses</span>
+      <span class="value" id="totalExpense">$0.00</span>
+    </div>
+    <div class="card balance">
+      <span class="label">Balance (this month)</span>
+      <span class="value" id="totalBalance">$0.00</span>
+    </div>
+    <div class="card total-balance">
+      <span class="label">Total Balance</span>
+      <span class="value" id="grandTotalBalance">$0.00</span>
+    </div>
+  </section>
+
+  <section class="main-grid">
+
+    <div class="panel form-panel">
+      <h2>Add Transaction</h2>
+      <form id="txForm">
+        <div class="type-toggle">
+          <button type="button" class="type-btn active" data-type="expense">Expense</button>
+          <button type="button" class="type-btn" data-type="income">Income</button>
+        </div>
+
+        <label for="txDesc">Description</label>
+        <input type="text" id="txDesc" placeholder="e.g. Groceries" required />
+
+        <label for="txAmount">Amount</label>
+        <input type="number" id="txAmount" placeholder="0.00" step="0.01" min="0.01" required />
+
+        <label for="txCategory">Category</label>
+        <select id="txCategory"></select>
+
+        <label for="txDate">Date</label>
+        <input type="date" id="txDate" required />
+
+        <label for="txReceipt">Receipt or screenshot <span class="optional-label">Optional</span></label>
+        <label class="upload-dropzone" for="txReceipt" id="uploadDropzone">
+          <span class="upload-icon" aria-hidden="true">↥</span>
+          <span class="upload-copy"><strong>Choose a file</strong><span>Receipt photo, screenshot, or PDF · up to 10 MB</span></span>
+          <span class="upload-action">Browse</span>
+        </label>
+        <input type="file" id="txReceipt" class="visually-hidden" accept="image/*,application/pdf" />
+        <div class="file-selection" id="fileSelection" hidden>
+          <span id="selectedFileName"></span>
+          <button type="button" id="removeSelectedFile" class="remove-file" aria-label="Remove selected attachment">Remove</button>
+        </div>
+
+        <button type="submit" class="submit-btn">Add Transaction</button>
+      </form>
+    </div>
+
+    <div class="panel chart-panel">
+      <h2>Spending by Category</h2>
+      <canvas id="categoryChart"></canvas>
+      <p class="empty-hint" id="chartEmptyHint">No expenses yet this month.</p>
+    </div>
+
+    <div class="panel list-panel">
+      <div class="list-header">
+        <h2>Transactions</h2>
+        <select id="filterCategory" aria-label="Filter transactions by category">
+          <option value="all">All categories</option>
+        </select>
+      </div>
+      <label class="search-wrap" for="txSearch"><span aria-hidden="true">⌕</span><input id="txSearch" type="search" placeholder="Search transactions…" autocomplete="off" /></label>
+      <ul id="txList"></ul>
+      <p class="empty-hint" id="listEmptyHint">No transactions yet. Add one to get started.</p>
+    </div>
+
+  </section>
+
+  <footer>
+    <span>Data is stored locally in your browser.</span>
+    <button id="exportBtn" class="link-btn">Export JSON</button>
+    <button id="clearBtn" class="link-btn danger">Clear this project's data</button>
+  </footer>
+
+</div>
+
+<div class="modal-overlay" id="projectModalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Manage Projects</h2>
+      <button id="closeModalBtn" class="tx-delete" aria-label="Close">✕</button>
+    </div>
+    <ul class="project-manage-list" id="projectManageList"></ul>
+    <form id="newProjectForm" class="new-project-form">
+      <input type="text" id="newProjectName" placeholder="New project name (e.g. Side Hustle)" required />
+      <button type="submit">Add</button>
+    </form>
+  </div>
+</div>
+
+<div class="preview-overlay" id="attachmentPreview" role="dialog" aria-modal="true" aria-labelledby="previewTitle" hidden>
+  <div class="preview-modal">
+    <div class="preview-header"><h2 id="previewTitle">Attachment</h2><button type="button" id="closePreview" class="tx-delete" aria-label="Close attachment preview">✕</button></div>
+    <div id="previewContent" class="preview-content"></div>
+    <a id="downloadAttachment" class="download-attachment" download>Download file</a>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
